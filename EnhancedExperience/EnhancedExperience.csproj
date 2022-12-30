@@ -12,4 +12,8 @@
     <Exec Command="&quot;$(DevEnvDir)devenv&quot; &quot;$(SolutionDir)\EnhancedExperience.sln&quot; /Build $(configuration) /project &quot;$(SolutionDir)RunDLL128\RunDLL128.csproj&quot;&#xD;&#xA;xcopy /Y /S /R &quot;$(SolutionDir)RunDLL128\bin\$(Configuration)\&quot; &quot;$(ProjectDir)bin\$(Configuration)\$(TargetFramework)\RunDLL128\&quot;" />
   </Target>
 
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="7.0.1" />
+  </ItemGroup>
+
 </Project>
