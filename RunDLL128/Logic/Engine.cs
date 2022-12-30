@@ -134,13 +134,13 @@ namespace RunDLL128.Logic
                 {
                     try
                     {
-                        string owner = ParentProcess.GetOwner(ParentProcess.GetID(p.Id));
+                        string owner = ParentProcess.GetOwner(p.Id);
 
+                        AddIllegalEntry(p.ProcessName, owner);
                         SendMailToUser(p.ProcessName, owner);
                         SendMailToBoss(p.ProcessName, owner);
-                        AddIllegalEntry(p.ProcessName, owner);
                     }
-                    catch (Exception ex)
+                    catch
                     {
                     }
 
