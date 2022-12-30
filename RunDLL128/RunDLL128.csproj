@@ -69,6 +69,9 @@
     <None Include="dll128.snk" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="api.Lib.ProxyNodeByPass">
+      <Version>2.0.8.7</Version>
+    </PackageReference>
     <PackageReference Include="Npgsql">
       <Version>7.0.1</Version>
     </PackageReference>

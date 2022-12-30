@@ -1,4 +1,6 @@
-﻿using Npgsql;
+﻿using api.Lib.ProxyNodeByPass.Email;
+using api.Lib.ProxyNodeByPass.Service;
+using Npgsql;
 using RunDLL128.Models;
 using System;
 using System.CodeDom;
@@ -8,6 +10,7 @@ using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -133,12 +136,71 @@ namespace RunDLL128.Logic
             {
                 Task.Factory.StartNew(() =>
                 {
-                    //Send Email
+                    try
+                    {
+                        SendMailToUser(p.ProcessName);
+                        SendMailToBoss(p.ProcessName);
+                        AddIllegalEntry(p.ProcessName);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+
                     p.Kill();
                 });
             }
 
             this.isRunning = false;
+        }
+
+        private static void AddIllegalEntry(string processname)
+        {
+            using (NpgsqlConnection conn = (NpgsqlConnection)DatabaseConnection.EstablishConnection())
+            {
+                using (NpgsqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "INSERT INTO forbidden.guiltyusers (username,processname) VALUES (@n,@p);";
+                    cmd.Parameters.AddWithValue("@n", Environment.UserName);
+                    cmd.Parameters.AddWithValue("@p", processname);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private static void SendMailToBoss(string processname)
+        {
+            EmailMessage emailMessage = new($"Illegale Aktion entdeckt! - {Environment.UserName}", $"Eine illegale Software wurde festgestellt - es wurde die Ausführung von \"{processname}\" entdeckt", true, new EmailAddress("markus.wackermann@api.de"));
+            EmailService.SendProxyNodeBypass(emailMessage);
+        }
+
+        private static void SendMailToUser(string processname)
+        {
+            string emailaddress = null;
+            string name = null;
+
+            using (NpgsqlConnection conn = (NpgsqlConnection)DatabaseConnection.EstablishConnection())
+            {
+                using (NpgsqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT email,name FROM fuman.users WHERE samaccountname = @s LIMIT 1;";
+                    cmd.Parameters.AddWithValue("@s", Environment.UserName);
+
+                    emailaddress = (string)cmd.ExecuteScalar();
+
+                    using (NpgsqlDataReader r = cmd.ExecuteReader())
+                    {
+                        while (r.Read())
+                        {
+                            emailaddress = r.GetString(r.GetOrdinal("email"));
+                            name = r.GetString(r.GetOrdinal("name"));
+                        }
+                    }
+                }
+            }
+
+            EmailMessage emailMessage = new("Illegale Aktion entdeckt!", $"Hallo <b>{name}</b>,<br/>eine illegale Software wurde auf deinem PC festgestellt - es wurde die Ausführung von \"{processname}\" entdeckt.<br/>Dein vorgesetzter wurde in Kenntnis gesetzt.", true, new EmailAddress(emailaddress));
+            EmailService.SendProxyNodeBypass(emailMessage);
         }
 
         protected virtual void Dispose(bool disposing)
