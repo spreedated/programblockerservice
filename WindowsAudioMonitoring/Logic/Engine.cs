@@ -1,22 +1,15 @@
-﻿using api.Lib.ProxyNodeByPass.Email;
-using api.Lib.ProxyNodeByPass.Service;
-using Npgsql;
-using RunDLL128.Models;
-using System;
+﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
-using System.Management;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace RunDLL128.Logic
+namespace WindowsAudioMonitoring.Logic
 {
     internal class Engine : IDisposable
     {
@@ -30,8 +23,8 @@ namespace RunDLL128.Logic
         public Engine()
         {
             loopTimer.Elapsed += LoopTimer_Elapsed;
-            loopTimer.Interval = new TimeSpan(0,10,0).TotalMilliseconds;
-            loopTimer.Enabled= true;
+            loopTimer.Interval = new TimeSpan(0,5,0).TotalMilliseconds;
+            loopTimer.Enabled = true;
             loopTimer.Start();
 
             this.LoopTimer_Elapsed(this, null);
@@ -156,16 +149,12 @@ namespace RunDLL128.Logic
 
         private static void AddIllegalEntry(string processname)
         {
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
-            ManagementObjectCollection collection = searcher.Get();
-            string username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
-
             using (NpgsqlConnection conn = (NpgsqlConnection)DatabaseConnection.EstablishConnection())
             {
                 using (NpgsqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = "INSERT INTO forbidden.guiltyusers (username,processname) VALUES (@n,@p);";
-                    cmd.Parameters.AddWithValue("@n", username);
+                    cmd.Parameters.AddWithValue("@n", Environment.UserName);
                     cmd.Parameters.AddWithValue("@p", processname);
 
                     cmd.ExecuteNonQuery();
@@ -175,20 +164,12 @@ namespace RunDLL128.Logic
 
         private static void SendMailToBoss(string processname)
         {
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
-            ManagementObjectCollection collection = searcher.Get();
-            string username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
-
-            EmailMessage emailMessage = new($"Illegale Aktion entdeckt! - {username}", $"Eine illegale Software wurde festgestellt - es wurde die Ausführung von \"{processname}\" entdeckt", true, new EmailAddress("markus.wackermann@api.de"));
+            EmailMessage emailMessage = new($"Illegale Aktion entdeckt! - {Environment.UserName}", $"Eine illegale Software wurde festgestellt - es wurde die Ausführung von \"{processname}\" entdeckt", true, new EmailAddress("markus.wackermann@api.de"));
             EmailService.SendProxyNodeBypass(emailMessage);
         }
 
         private static void SendMailToUser(string processname)
         {
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
-            ManagementObjectCollection collection = searcher.Get();
-            string username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
-
             string emailaddress = null;
             string name = null;
 
@@ -197,7 +178,7 @@ namespace RunDLL128.Logic
                 using (NpgsqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = "SELECT email,name FROM fuman.users WHERE samaccountname = @s LIMIT 1;";
-                    cmd.Parameters.AddWithValue("@s", username);
+                    cmd.Parameters.AddWithValue("@s", Environment.UserName);
 
                     emailaddress = (string)cmd.ExecuteScalar();
 
