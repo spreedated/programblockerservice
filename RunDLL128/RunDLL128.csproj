@@ -54,6 +54,7 @@
     <Compile Include="Logic\DatabaseConnectionSqlite.cs" />
     <Compile Include="Logic\DatabaseConnection.cs" />
     <Compile Include="Logic\Engine.cs" />
+    <Compile Include="Logic\ParentProcess.cs" />
     <Compile Include="Models\DTO_Process.cs" />
     <Compile Include="ServiceEntry.cs">
       <SubType>Component</SubType>
