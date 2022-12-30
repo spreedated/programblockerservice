@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnhancedExperience", "EnhancedExperience\EnhancedExperience.csproj", "{1175F305-E4FA-4E14-9544-76524F5C29F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunDLL128", "RunDLL128\RunDLL128.csproj", "{5DDC9C17-4712-48D0-AE98-139E212B0A66}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1175F305-E4FA-4E14-9544-76524F5C29F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1175F305-E4FA-4E14-9544-76524F5C29F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1175F305-E4FA-4E14-9544-76524F5C29F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1175F305-E4FA-4E14-9544-76524F5C29F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DDC9C17-4712-48D0-AE98-139E212B0A66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DDC9C17-4712-48D0-AE98-139E212B0A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DDC9C17-4712-48D0-AE98-139E212B0A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DDC9C17-4712-48D0-AE98-139E212B0A66}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F9C92D51-060D-432C-9092-A1DD43CE09FB}
+	EndGlobalSection
+EndGlobal
